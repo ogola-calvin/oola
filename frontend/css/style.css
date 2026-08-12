@@ -1,0 +1,544 @@
+/* ============================================================
+   DESIGN TOKENS
+   Subject: a clinical vitals/assessment workflow used by a
+   practitioner mid-consultation. Palette reads as a lab chart —
+   pale sage paper, deep teal ink, warm rust for the one active
+   action, muted status colors borrowed from a real BMI chart.
+   ============================================================ */
+:root {
+  --color-bg: #eaf0ec;
+  --color-surface: #ffffff;
+  --color-surface-tint: #f3f7f4;
+  --color-ink: #16302c;
+  --color-ink-muted: #4d635e;
+  --color-primary: #1f4b4a;
+  --color-primary-dark: #123331;
+  --color-accent: #bb5f38;
+  --color-accent-dark: #9c4c2b;
+  --color-border: #d7e2dc;
+  --color-good: #4f7a5e;
+  --color-good-bg: #e6efe8;
+  --color-warn: #a83e22;
+  --color-warn-bg: #f5e4dd;
+  --color-info: #4c6d8c;
+  --color-info-bg: #e4ebf1;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  --radius-card: 14px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(22, 48, 44, 0.06), 0 8px 24px rgba(22, 48, 44, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  color: var(--color-primary-dark);
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 1.9rem;
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.3rem;
+}
+h3 {
+  font-size: 1.05rem;
+}
+
+p {
+  margin: 0 0 12px;
+  color: var(--color-ink-muted);
+}
+
+a {
+  color: var(--color-primary);
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.app-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px 20px 64px;
+}
+
+.brand-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.brand-mark {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: var(--color-accent-dark);
+  background: var(--color-warn-bg);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.brand-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.api-config-link {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-ink-muted);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.api-config-link:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* --- Chart strip: the signature element. Persistent "wristband/
+   chart tab" showing the active patient across the whole flow. --- */
+.chart-strip {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  background: var(--color-primary);
+  color: #eef4f1;
+  border-radius: var(--radius-card);
+  padding: 14px 20px;
+  margin-bottom: 22px;
+  font-family: var(--font-mono);
+  box-shadow: var(--shadow-card);
+}
+
+.chart-strip.is-empty {
+  background: var(--color-surface-tint);
+  color: var(--color-ink-muted);
+  border: 1px dashed var(--color-border);
+  box-shadow: none;
+}
+
+.chart-strip .cs-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chart-strip .cs-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.chart-strip .cs-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.chart-strip .cs-spacer {
+  flex: 1;
+}
+
+/* ============================================================
+   STEPPER — a real sequence, so numbering earns its place here.
+   ============================================================ */
+.layout-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stepper {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stepper li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: var(--color-ink-muted);
+}
+
+.stepper li .num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  flex-shrink: 0;
+}
+
+.stepper li.active {
+  background: var(--color-surface);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  box-shadow: var(--shadow-card);
+}
+.stepper li.active .num {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+.stepper li.done .num {
+  background: var(--color-good);
+  border-color: var(--color-good);
+  color: #fff;
+}
+
+/* ============================================================
+   CARD / FORM
+   ============================================================ */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 26px 28px;
+}
+
+.card-header {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent-dark);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.form-grid .span-2 {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 560px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: 6px;
+}
+
+.hint {
+  font-size: 0.74rem;
+  color: var(--color-ink-muted);
+  margin-top: 4px;
+}
+
+input[type='text'],
+input[type='date'],
+input[type='number'],
+select,
+textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface-tint);
+  color: var(--color-ink);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+  background: var(--color-surface);
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.radio-row {
+  display: flex;
+  gap: 18px;
+  padding-top: 4px;
+}
+
+.radio-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.radio-row input {
+  width: auto;
+}
+
+/* Numeric vitals rendered like a monitor readout — the signature
+   detail for the Vitals page specifically. */
+.readout {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  background: var(--color-surface-tint);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.readout .r-item .r-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  display: block;
+}
+.readout .r-item .r-value {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
+}
+
+button {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 9px;
+  padding: 11px 20px;
+  cursor: pointer;
+  transition: transform 0.05s ease, opacity 0.15s ease;
+}
+button:active {
+  transform: translateY(1px);
+}
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-accent-dark);
+}
+
+.btn-secondary {
+  background: var(--color-surface-tint);
+  color: var(--color-ink);
+  border: 1px solid var(--color-border);
+}
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}
+
+/* ============================================================
+   PILLS / STATUS
+   ============================================================ */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+.pill-good {
+  background: var(--color-good-bg);
+  color: var(--color-good);
+}
+.pill-warn {
+  background: var(--color-warn-bg);
+  color: var(--color-warn);
+}
+.pill-info {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+}
+
+/* ============================================================
+   ALERTS / MESSAGES
+   ============================================================ */
+.alert {
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.86rem;
+  margin-bottom: 16px;
+}
+.alert-error {
+  background: var(--color-warn-bg);
+  color: var(--color-warn);
+  border: 1px solid #e6c3b3;
+}
+.alert-success {
+  background: var(--color-good-bg);
+  color: var(--color-good);
+  border: 1px solid #c7dccb;
+}
+
+/* ============================================================
+   TABLE (Patient Listing)
+   ============================================================ */
+.table-toolbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.table-toolbar .field {
+  max-width: 220px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+thead th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+tbody td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+tbody tr:hover {
+  background: var(--color-surface-tint);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-ink-muted);
+}
+
+.empty-state .num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.skeleton-row td {
+  color: var(--color-ink-muted);
+  font-style: italic;
+}
+
+/* ============================================================
+   MODAL (API config)
+   ============================================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 51, 49, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 20px;
+}
+.modal {
+  background: #fff;
+  border-radius: var(--radius-card);
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: var(--shadow-card);
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Chart — Vitals &amp; Assessment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="brand-row">
+      <div class="brand">
+        <span class="brand-mark">RX</span>
+        <span class="brand-title">Patient Chart</span>
+      </div>
+      <button class="api-config-link" id="api-config-btn" type="button">API: <span id="api-url-label"></span></button>
+    </div>
+
+    <div id="chart-strip-mount"></div>
+
+    <div class="layout-grid">
+      <ul class="stepper" id="stepper"></ul>
+      <main class="card" id="view-mount">
+        <!-- active view renders here -->
+      </main>
+    </div>
+  </div>
+
+  <div id="modal-mount"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
